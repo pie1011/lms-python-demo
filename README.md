@@ -3,7 +3,7 @@
 > **Portfolio Project by Katie Harshman**  
 > A comprehensive Learning Management System showcasing modern Django development, database design, and production deployment skills.
 
-🔗 **Live Demo:** [https://lms-python-otqx.onrender.com](https://lms-python-demo.onrender.com)
+🔗 **Live Demo:** [https://lms-python-demo.onrender.com](https://lms-python-demo.onrender.com)
 
 **My Portfolio:** [https://katieharshman.com](https://katieharshman.com)
 
@@ -218,9 +218,9 @@ The project emphasizes clean, maintainable code and demonstrates the ability to 
 
 ## 🔗 Links
 
-- **Live Demo:** [https://lms-python-demo.onrender.com](https://lms-python-otqx.onrender.com)
+- **Live Demo:** [https://lms-python-demo.onrender.com](https://lms-python-demo.onrender.com)
 - **Demo Credentials:** `PortfolioDemo` / `ViewOnly123`
-- **GitHub Repository:** [https://github.com/pie1011/lms-python](https://github.com/pie1011/lms-python)
+- **GitHub Repository:** [https://github.com/pie1011/lms-python-demo](https://github.com/pie1011/lms-python-demo)
 - **Developer Portfolio:** [https://katieharshman.com](https://katieharshman.com)
 
 ---
