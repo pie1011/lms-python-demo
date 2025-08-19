@@ -8,134 +8,7 @@
     <title>LMS Platform - Modern Learning Management System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/modern-lms.css' %}">
-    <style>
-        /* Enhanced navigation for multiple portals */
-        .nav-cta {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            position: relative;
-        }
-
-        .portal-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-button {
-            padding: 0.75rem 1.5rem;
-            border: 2px solid var(--primary-blue);
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: transparent;
-            color: var(--primary-blue);
-        }
-
-        .dropdown-button:hover {
-            background: var(--primary-blue);
-            color: var(--white);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--white);
-            min-width: 200px;
-            box-shadow: var(--shadow-xl);
-            border-radius: 8px;
-            border: 1px solid rgba(37, 99, 235, 0.1);
-            z-index: 1000;
-            margin-top: 0.5rem;
-        }
-
-        .portal-dropdown:hover .dropdown-content {
-            display: block;
-            animation: dropdownFadeIn 0.3s ease;
-        }
-
-        @keyframes dropdownFadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .dropdown-item {
-            display: block;
-            padding: 1rem 1.5rem;
-            color: var(--neutral-dark);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(37, 99, 235, 0.1);
-        }
-
-        .dropdown-item:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(37, 99, 235, 0.05);
-            color: var(--primary-blue);
-        }
-
-        .dropdown-item i {
-            width: 16px;
-            margin-right: 0.75rem;
-            color: var(--primary-blue);
-        }
-
-        .dropdown-item .item-description {
-            font-size: 0.8rem;
-            color: var(--neutral-gray);
-            margin-top: 0.25rem;
-        }
-
-        .demo-badge {
-            background: var(--accent-green);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            margin-left: 0.5rem;
-        }
-
-        /* Mobile responsive dropdown */
-        @media (max-width: 768px) {
-            .nav-cta {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .dropdown-content {
-                position: relative;
-                display: block;
-                box-shadow: none;
-                border: none;
-                margin-top: 0;
-                background: transparent;
-            }
-
-            .portal-dropdown:hover .dropdown-content {
-                display: block;
-            }
-
-            .dropdown-item {
-                padding: 0.75rem 1rem;
-                border: 1px solid rgba(37, 99, 235, 0.2);
-                border-radius: 6px;
-                margin-bottom: 0.5rem;
-                background: var(--white);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/dropdown-navigation.css' %}">
 </head>
 <body>
     <!-- Header -->
@@ -145,11 +18,15 @@
                 <i class="fas fa-graduation-cap"></i>
                 LMS Platform
             </a>
+            
+            <!-- Desktop Navigation Menu -->
             <ul class="nav-menu">
                 <li><a href="#features" class="nav-link">Features</a></li>
                 <li><a href="#courses" class="nav-link">Training</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
             </ul>
+            
+            <!-- Desktop CTA Buttons -->
             <div class="nav-cta">
                 <!-- Employee Training Portal Button -->
                 <a href="{% url 'student_login' %}" class="btn btn-primary">
@@ -158,8 +35,8 @@
                 </a>
                 
                 <!-- Staff Portal Dropdown -->
-                <div class="portal-dropdown">
-                    <div class="dropdown-button">
+                <div class="portal-dropdown" id="staffPortalDropdown">
+                    <div class="dropdown-button" onclick="toggleDropdown()">
                         <i class="fas fa-users-cog"></i>
                         Staff Portal
                         <i class="fas fa-chevron-down"></i>
@@ -184,8 +61,90 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Open mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
         </nav>
     </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+    <!-- Mobile Navigation Menu -->
+    <nav class="mobile-nav-menu" id="mobileNavMenu">
+        <div class="mobile-nav-header">
+            <div class="mobile-nav-logo">
+                <i class="fas fa-graduation-cap"></i>
+                LMS Platform
+            </div>
+            <button class="mobile-nav-close" onclick="closeMobileMenu()" aria-label="Close mobile menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mobile-nav-content">
+            <!-- Navigation Links -->
+            <div class="mobile-nav-section">
+                <h3>Navigation</h3>
+                <ul class="mobile-nav-links">
+                    <li><a href="#features" class="mobile-nav-link">
+                        <i class="fas fa-star"></i>Features
+                    </a></li>
+                    <li><a href="#courses" class="mobile-nav-link">
+                        <i class="fas fa-graduation-cap"></i>Training
+                    </a></li>
+                    <li><a href="#about" class="mobile-nav-link">
+                        <i class="fas fa-info-circle"></i>About
+                    </a></li>
+                </ul>
+            </div>
+
+            <!-- Portal Access -->
+            <div class="mobile-nav-section">
+                <h3>Portal Access</h3>
+                <ul class="mobile-nav-links">
+                    <li><a href="{% url 'student_login' %}" class="mobile-nav-link">
+                        <i class="fas fa-user-tie"></i>Employee Training Portal
+                    </a></li>
+                    <li><a href="{% url 'admin:login' %}" class="mobile-nav-link">
+                        <i class="fas fa-shield-alt"></i>HR Administrator
+                        <span class="demo-badge" style="margin-left: auto;">DEMO</span>
+                    </a></li>
+                    <li><a href="#" class="mobile-nav-link" style="opacity: 0.6; cursor: not-allowed;">
+                        <i class="fas fa-chalkboard-teacher"></i>Instructor Portal
+                        <span style="background: var(--neutral-gray); margin-left: auto;" class="demo-badge">COMING SOON</span>
+                    </a></li>
+                </ul>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="mobile-nav-section">
+                <h3>Quick Links</h3>
+                <ul class="mobile-nav-links">
+                    <li><a href="https://github.com/pie1011/lms-python" class="mobile-nav-link" target="_blank">
+                        <i class="fab fa-github"></i>GitHub Repository
+                    </a></li>
+                    <li><a href="#contact" class="mobile-nav-link">
+                        <i class="fas fa-envelope"></i>Contact
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mobile CTA Section -->
+        <div class="mobile-nav-cta">
+            <a href="{% url 'student_login' %}" class="btn btn-primary">
+                <i class="fas fa-rocket"></i>
+                Access Training Portal
+            </a>
+            <a href="{% url 'admin:login' %}" class="btn btn-outline">
+                <i class="fas fa-shield-alt"></i>
+                HR Admin Demo
+            </a>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -296,7 +255,7 @@
                     </div>
                     <h3>Mobile Access</h3>
                     <p>Employees can complete training anywhere, anytime. Responsive design works seamlessly across all devices for maximum accessibility.</p>
-                </div>
+                    </div>
 
                 <div class="feature-card loading">
                     <div class="feature-icon green">
@@ -331,19 +290,21 @@
             
             <div class="footer-links">
                 <a href="#features">Features</a>
-                <a href="{% url 'admin:index' %}">Admin</a>
+                <a href="{% url 'admin:index' %}">HR Admin</a>
+                <a href="{% url 'student_login' %}">Employee Training</a>
                 <a href="#about">About</a>
                 <a href="https://github.com/pie1011/lms-python-demo">GitHub</a>
-                <a href="https://katieharshman.com">Portfolio</a>
                 <a href="#contact">Contact</a>
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2025 LMS Platform - Portfolio Project by <a href="https://katieharshman.com" style="color: rgba(255, 255, 255, 0.8); text-decoration: none;">Katie Harshman</a>. All rights reserved.</p>
+                <p>&copy; 2025 LMS Platform - Corporate Training Solution by Katie Harshman. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
+    <!-- Load JavaScript Files -->
     <script src="{% static 'js/modern-lms.js' %}"></script>
+    <script src="{% static 'js/dropdown-navigation.js' %}"></script>
 </body>
 </html>

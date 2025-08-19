@@ -1,0 +1,313 @@
+/* Enhanced navigation for multiple portals */
+.nav-cta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    position: relative;
+}
+
+.portal-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-button {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--primary-blue);
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--primary-blue);
+}
+
+.dropdown-button:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Dropdown content - shows on click */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--white);
+    min-width: 200px;
+    box-shadow: var(--shadow-xl);
+    border-radius: 8px;
+    border: 1px solid rgba(37, 99, 235, 0.1);
+    z-index: 1000;
+    margin-top: 0.5rem;
+}
+
+/* Show dropdown when active class is added */
+.portal-dropdown.active .dropdown-content {
+    display: block;
+    animation: dropdownFadeIn 0.3s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: var(--neutral-dark);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: rgba(37, 99, 235, 0.05);
+    color: var(--primary-blue);
+}
+
+.dropdown-item i {
+    width: 16px;
+    margin-right: 0.75rem;
+    color: var(--primary-blue);
+}
+
+.dropdown-item .item-description {
+    font-size: 0.8rem;
+    color: var(--neutral-gray);
+    margin-top: 0.25rem;
+}
+
+.demo-badge {
+    background: var(--accent-green);
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+}
+
+/* Mobile Hamburger Menu */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+/* Mobile Navigation Overlay */
+.mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+}
+
+.mobile-nav-overlay.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Mobile Navigation Menu */
+.mobile-nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background: var(--white);
+    box-shadow: var(--shadow-xl);
+    z-index: 9999;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+}
+
+.mobile-nav-menu.active {
+    right: 0;
+}
+
+.mobile-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    background: var(--gradient-primary);
+    color: var(--white);
+}
+
+.mobile-nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.mobile-nav-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--white);
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.mobile-nav-content {
+    padding: 1.5rem;
+}
+
+.mobile-nav-section {
+    margin-bottom: 2rem;
+}
+
+.mobile-nav-section h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.mobile-nav-links {
+    list-style: none;
+}
+
+.mobile-nav-links li {
+    margin-bottom: 0.5rem;
+}
+
+.mobile-nav-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--neutral-dark);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.mobile-nav-link:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary-blue);
+    transform: translateX(4px);
+}
+
+.mobile-nav-link i {
+    width: 20px;
+    margin-right: 0.75rem;
+    color: var(--primary-blue);
+}
+
+/* Mobile CTA Buttons */
+.mobile-nav-cta {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(37, 99, 235, 0.1);
+    background: var(--neutral-light);
+}
+
+.mobile-nav-cta .btn {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.mobile-nav-cta .btn:last-child {
+    margin-bottom: 0;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    /* Show mobile menu toggle */
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    /* Hide desktop navigation */
+    .nav-menu {
+        display: none;
+    }
+
+    /* Stack nav elements on mobile */
+    .nav-cta {
+        display: none; /* Hide desktop CTA on mobile, will be in mobile menu */
+    }
+
+    /* Adjust dropdown for mobile when used */
+    .dropdown-content {
+        position: relative;
+        display: block;
+        box-shadow: none;
+        border: none;
+        margin-top: 0;
+        background: transparent;
+        min-width: auto;
+        width: 100%;
+    }
+
+    .portal-dropdown.active .dropdown-content {
+        display: block;
+    }
+
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        background: var(--white);
+    }
+
+    /* Prevent body scroll when mobile menu is open */
+    body.mobile-menu-open {
+        overflow: hidden;
+    }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .nav-cta {
+        gap: 0.75rem;
+    }
+
+    .dropdown-button {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
