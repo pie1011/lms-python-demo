@@ -1,0 +1,9 @@
+db.sqlite3
+__pycache__/
+staticfiles/
+.env
+venv/
+
+node_modules/
+package-lock.json
+package.json

@@ -1,0 +1,329 @@
+{% extends "admin/base.html" %}
+{% load admin_urls static admin_modify %}
+
+{% block title %}
+    {% if add %}Add {{ opts.verbose_name }}{% else %}Change {{ opts.verbose_name }}{% endif %} | {{ site_title|default:"Django site admin" }}
+{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+<script src="{% url 'admin:jsi18n' %}"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/admin-styles.css' %}">
+    <style>
+        /* Django form styling to match our beautiful admin design */
+        
+        /* Fieldset styling */
+        .module.aligned {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        /* Fieldset headers */
+        .fieldset-heading,
+        .module h2 {
+            background: none !important;
+            color: var(--neutral-dark) !important;
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 1rem !important;
+            padding-bottom: 0.5rem !important;
+            border-bottom: 2px solid var(--primary-blue) !important;
+            text-transform: none !important;
+        }
+        
+        /* Form rows */
+        .form-row {
+            margin-bottom: 1.5rem !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+        
+        .form-row.errors {
+            border-left: 4px solid #ef4444;
+            padding-left: 1rem;
+            background: rgba(239, 68, 68, 0.05);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* Labels */
+        .form-row label {
+            font-weight: 600 !important;
+            color: var(--neutral-dark) !important;
+            font-size: 0.9rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            display: block !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        /* Required field indicator */
+        .required label:after {
+            content: ' *';
+            color: #ef4444;
+        }
+        
+        /* All input types */
+        .form-row input[type="text"],
+        .form-row input[type="email"],
+        .form-row input[type="password"],
+        .form-row input[type="number"],
+        .form-row input[type="tel"],
+        .form-row input[type="url"],
+        .form-row input[type="date"],
+        .form-row input[type="datetime-local"],
+        .form-row input[type="time"],
+        .form-row textarea,
+        .form-row select {
+            width: 100% !important;
+            max-width: 500px !important;
+            padding: 0.75rem 1rem !important;
+            border: 2px solid rgba(37, 99, 235, 0.2) !important;
+            border-radius: 8px !important;
+            font-size: 1rem !important;
+            transition: all 0.3s ease !important;
+            background: var(--white) !important;
+            color: var(--neutral-dark) !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Focus states */
+        .form-row input:focus,
+        .form-row textarea:focus,
+        .form-row select:focus {
+            outline: none !important;
+            border-color: var(--primary-blue) !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+            transform: translateY(-1px) !important;
+        }
+        
+        /* Select dropdown styling */
+        .form-row select {
+            cursor: pointer !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+            background-position: right 0.5rem center !important;
+            background-repeat: no-repeat !important;
+            background-size: 1.5em 1.5em !important;
+            padding-right: 2.5rem !important;
+            appearance: none !important;
+        }
+        
+        /* Textarea styling */
+        .form-row textarea {
+            min-height: 120px !important;
+            resize: vertical !important;
+            font-family: inherit !important;
+        }
+        
+        /* Checkbox and radio styling */
+        .form-row input[type="checkbox"],
+        .form-row input[type="radio"] {
+            width: auto !important;
+            max-width: none !important;
+            margin-right: 0.5rem !important;
+            accent-color: var(--primary-blue) !important;
+            transform: scale(1.2) !important;
+        }
+        
+        .checkbox-row {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+        }
+        
+        .checkbox-row label {
+            text-transform: none !important;
+            font-weight: 500 !important;
+            margin-bottom: 0 !important;
+        }
+        
+        /* File upload styling */
+        .form-row input[type="file"] {
+            padding: 0.75rem !important;
+            border: 2px dashed rgba(37, 99, 235, 0.3) !important;
+            border-radius: 8px !important;
+            background: rgba(37, 99, 235, 0.05) !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .form-row input[type="file"]:hover {
+            border-color: var(--primary-blue) !important;
+            background: rgba(37, 99, 235, 0.1) !important;
+        }
+        
+        /* Help text */
+        .help,
+        .help div {
+            font-size: 0.8rem !important;
+            color: var(--neutral-gray) !important;
+            margin-top: 0.25rem !important;
+            font-style: italic !important;
+            line-height: 1.4 !important;
+        }
+        
+        /* Error styling */
+        .errorlist {
+            color: #ef4444 !important;
+            font-size: 0.85rem !important;
+            background: rgba(239, 68, 68, 0.1) !important;
+            padding: 0.5rem !important;
+            border-radius: 4px !important;
+            border-left: 3px solid #ef4444 !important;
+            margin-bottom: 0.5rem !important;
+            list-style: none !important;
+        }
+        
+        .errorlist li {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* Readonly fields */
+        .readonly {
+            padding: 0.75rem 1rem !important;
+            background: var(--neutral-light) !important;
+            border: 2px solid rgba(37, 99, 235, 0.1) !important;
+            border-radius: 8px !important;
+            color: var(--neutral-gray) !important;
+            max-width: 500px !important;
+        }
+        
+        /* Description text */
+        .description {
+            color: var(--neutral-gray) !important;
+            font-size: 0.9rem !important;
+            margin-bottom: 1.5rem !important;
+            padding: 1rem !important;
+            background: rgba(37, 99, 235, 0.05) !important;
+            border-radius: 8px !important;
+            border-left: 4px solid var(--primary-blue) !important;
+        }
+        
+        /* Multiple field rows */
+        .form-multiline {
+            display: flex !important;
+            gap: 1rem !important;
+            flex-wrap: wrap !important;
+        }
+        
+        .fieldBox {
+            flex: 1 !important;
+            min-width: 200px !important;
+        }
+        
+        /* Hidden fields */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-main" style="grid-template-columns: 1fr;">
+        <div class="admin-content">
+            <div class="content-header">
+                <h1 class="content-title">
+                    {% if add %}
+                        Add {{ opts.verbose_name }}
+                    {% else %}
+                        Change {{ opts.verbose_name }}
+                    {% endif %}
+                </h1>
+                <div class="breadcrumbs">
+                    <a href="{% url 'admin:index' %}" class="breadcrumb-link">Home</a>
+                    <span class="breadcrumb-separator">›</span>
+                    <a href="{% url 'admin:app_list' app_label=opts.app_label %}" class="breadcrumb-link">{{ opts.app_config.verbose_name }}</a>
+                    <span class="breadcrumb-separator">›</span>
+                    <a href="{% url 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_changelist' %}" class="breadcrumb-link">{{ opts.verbose_name_plural|capfirst }}</a>
+                    <span class="breadcrumb-separator">›</span>
+                    <span>{% if add %}Add{% else %}Change{% endif %}</span>
+                </div>
+            </div>
+
+            {% if errors %}
+                <div class="message error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+
+            <form method="post" class="admin-form" {% if has_file_field %}enctype="multipart/form-data"{% endif %}>
+                {% csrf_token %}
+                
+                <!-- Use Django's default form rendering with our styles -->
+                {% for fieldset in adminform %}
+                    {% include "admin/includes/fieldset.html" %}
+                {% endfor %}
+                
+                <!-- Inline formsets if any -->
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% include inline_admin_formset.opts.template %}
+                {% endfor %}
+                
+                <div class="form-actions">
+                    <div class="form-actions-left">
+                        {% if not add %}
+                            {% if has_delete_permission %}
+                                <a href="{% url 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_delete' original.pk %}" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-actions-right">
+                        <a href="{% url 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_changelist' %}" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i>
+                            Cancel
+                        </a>
+                        
+                        {% if has_add_permission or has_change_permission %}
+                            <button type="submit" name="_save" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Save
+                            </button>
+                            
+                            {% if add and has_add_permission %}
+                                <button type="submit" name="_addanother" class="btn btn-outline">
+                                    <i class="fas fa-plus"></i>
+                                    Save and add another
+                                </button>
+                            {% endif %}
+                            
+                            {% if not add and has_change_permission %}
+                                <button type="submit" name="_continue" class="btn btn-outline">
+                                    <i class="fas fa-edit"></i>
+                                    Save and continue editing
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+
+            <!-- Show password change link for non-demo users -->
+            {% if not add and original and opts.model_name == 'user' and has_change_password_permission %}
+                <div class="module" style="margin-top: 2rem;">
+                    <h2>Password</h2>
+                    <p style="margin-bottom: 1rem;">
+                        Raw passwords are not stored, so there is no way to see this user's password, 
+                        but you can change the password using 
+                        <a href="{% url 'admin:auth_user_password_change' original.pk %}" class="table-link">this form</a>.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

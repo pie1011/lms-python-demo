@@ -1,0 +1,349 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Platform - Modern Learning Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/modern-lms.css' %}">
+    <style>
+        /* Enhanced navigation for multiple portals */
+        .nav-cta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .portal-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: transparent;
+            color: var(--primary-blue);
+        }
+
+        .dropdown-button:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            min-width: 200px;
+            box-shadow: var(--shadow-xl);
+            border-radius: 8px;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .portal-dropdown:hover .dropdown-content {
+            display: block;
+            animation: dropdownFadeIn 0.3s ease;
+        }
+
+        @keyframes dropdownFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--neutral-dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(37, 99, 235, 0.05);
+            color: var(--primary-blue);
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            margin-right: 0.75rem;
+            color: var(--primary-blue);
+        }
+
+        .dropdown-item .item-description {
+            font-size: 0.8rem;
+            color: var(--neutral-gray);
+            margin-top: 0.25rem;
+        }
+
+        .demo-badge {
+            background: var(--accent-green);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+
+        /* Mobile responsive dropdown */
+        @media (max-width: 768px) {
+            .nav-cta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .dropdown-content {
+                position: relative;
+                display: block;
+                box-shadow: none;
+                border: none;
+                margin-top: 0;
+                background: transparent;
+            }
+
+            .portal-dropdown:hover .dropdown-content {
+                display: block;
+            }
+
+            .dropdown-item {
+                padding: 0.75rem 1rem;
+                border: 1px solid rgba(37, 99, 235, 0.2);
+                border-radius: 6px;
+                margin-bottom: 0.5rem;
+                background: var(--white);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="{% url 'index' %}" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                LMS Platform
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#courses" class="nav-link">Training</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+            </ul>
+            <div class="nav-cta">
+                <!-- Employee Training Portal Button -->
+                <a href="{% url 'student_login' %}" class="btn btn-primary">
+                    <i class="fas fa-user-tie"></i>
+                    Employee Portal
+                </a>
+                
+                <!-- Staff Portal Dropdown -->
+                <div class="portal-dropdown">
+                    <div class="dropdown-button">
+                        <i class="fas fa-users-cog"></i>
+                        Staff Portal
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="{% url 'admin:login' %}" class="dropdown-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                HR Administrator
+                                <span class="demo-badge">DEMO</span>
+                                <div class="item-description">Manage users, courses, and system settings</div>
+                            </div>
+                        </a>
+                        <a href="#" class="dropdown-item" style="opacity: 0.6; cursor: not-allowed;">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <div>
+                                Instructor Portal
+                                <span style="background: var(--neutral-gray);" class="demo-badge">COMING SOON</span>
+                                <div class="item-description">Create courses, grade assignments, track progress</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content loading">
+                <h1>Transform Learning with Modern HR Training Technology</h1>
+                <p>Empower your workforce with our comprehensive Employee Training Platform. Streamline compliance training, track professional development, and build meaningful learning experiences for your organization.</p>
+                
+                <div class="hero-cta">
+                    <a href="{% url 'student_login' %}" class="btn btn-primary">
+                        Access Training Portal
+                        <i class="fas fa-rocket"></i>
+                    </a>
+                    <a href="#features" class="btn btn-outline">
+                        Learn More
+                        <i class="fas fa-play"></i>
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">4+</span>
+                        <span class="stat-label">Training Programs</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">User Roles</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Open Source</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual loading">
+                <div class="hero-card">
+                    <div class="course-preview">
+                        <h3 class="course-title">SAFE101 - Workplace Safety Fundamentals</h3>
+                        <div class="course-progress">
+                            <div class="progress-bar"></div>
+                        </div>
+                        <div class="course-meta">
+                            <span>Module: Emergency Procedures</span>
+                            <span>Assessment Ready</span>
+                        </div>
+                    </div>
+                    
+                    <div class="course-preview">
+                        <h3 class="course-title">COMP201 - Compliance & Ethics Training</h3>
+                        <div class="course-progress">
+                            <div class="progress-bar" style="width: 90%;"></div>
+                        </div>
+                        <div class="course-meta">
+                            <span>Progress: 90%</span>
+                            <span>HR Training Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <h2>Everything You Need for Corporate Training</h2>
+                <p>Our comprehensive platform provides all the tools HR teams and employees need for effective workplace learning and compliance training.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card loading">
+                    <div class="feature-icon blue">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>Compliance Training</h3>
+                    <p>Ensure workplace safety, ethics compliance, and anti-harassment training with comprehensive tracking and certification management.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon green">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor employee training progress with detailed analytics, completion rates, and assessment scores to ensure organizational compliance.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon orange">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3>Assessment Management</h3>
+                    <p>Create knowledge checks, scenario-based assessments, and certification exams with automated scoring and detailed feedback.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon purple">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Training Schedules</h3>
+                    <p>Automated training assignments, deadline tracking, and compliance reminders to keep your workforce up-to-date with requirements.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon blue">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Access</h3>
+                    <p>Employees can complete training anywhere, anytime. Responsive design works seamlessly across all devices for maximum accessibility.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon green">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Enterprise Security</h3>
+                    <p>Corporate-grade security with role-based access controls, audit trails, and data protection to meet organizational compliance standards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2>Ready to Transform Your Employee Training?</h2>
+            <p>Join forward-thinking organizations using our platform for compliance training, professional development, and workforce education. Start your demo today!</p>
+            <a href="{% url 'student_login' %}" class="btn btn-white">
+                Try Employee Training Portal
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                LMS Platform
+            </div>
+            
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="{% url 'admin:index' %}">Admin</a>
+                <a href="#about">About</a>
+                <a href="https://github.com/pie1011/lms-python-demo">GitHub</a>
+                <a href="https://katieharshman.com">Portfolio</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 LMS Platform - Portfolio Project by <a href="https://katieharshman.com" style="color: rgba(255, 255, 255, 0.8); text-decoration: none;">Katie Harshman</a>. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/modern-lms.js' %}"></script>
+</body>
+</html>

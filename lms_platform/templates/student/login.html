@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Training Portal | LMS Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/modern-lms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/student-styles.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <a href="{% url 'index' %}" class="login-logo">
+                    <i class="fas fa-user-tie"></i>
+                    Employee Training Portal
+                </a>
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-subtitle">Access your professional development and training programs</p>
+            </div>
+
+            <!-- Demo Information -->
+            <div class="demo-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Demo Employee Account:</strong><br>
+                Username: <code>demo_employee</code><br>
+                Password: <code>training123</code>
+            </div>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Employee ID / Username
+                    </label>
+                    <input type="text" 
+                           name="username" 
+                           id="username"
+                           class="form-input"
+                           placeholder="Enter your employee username"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" 
+                           name="password" 
+                           id="password"
+                           class="form-input"
+                           placeholder="Enter your password"
+                           required>
+                </div>
+                
+                <button type="submit" class="login-button">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Access Training Portal
+                </button>
+            </form>
+
+            <div class="login-links">
+                <a href="{% url 'index' %}">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Main Site
+                </a>
+                <span style="margin: 0 1rem; color: var(--neutral-gray);">|</span>
+                <a href="{% url 'admin:login' %}">
+                    <i class="fas fa-cog"></i>
+                    HR Admin Portal
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

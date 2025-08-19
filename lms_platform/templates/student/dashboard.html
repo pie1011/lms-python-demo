@@ -1,0 +1,295 @@
+{% extends "student/base.html" %}
+
+{% block title %}Employee Training Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1 class="dashboard-title">Welcome back, {{ profile.first_name }}!</h1>
+    <p class="dashboard-subtitle">Your professional development and training progress overview</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <div class="card-header">
+            <div class="card-icon blue">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="card-value">{{ total_courses }}</div>
+        </div>
+        <h3 class="card-title">Training Programs</h3>
+        <p class="card-description">Active enrollment in required and elective training</p>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <div class="card-icon green">
+                <i class="fas fa-clipboard-check"></i>
+            </div>
+            <div class="card-value">{{ total_submissions }}</div>
+        </div>
+        <h3 class="card-title">Completed Assessments</h3>
+        <p class="card-description">{{ graded_submissions }} graded, {{ total_submissions|add:"-"|add:graded_submissions }} pending review</p>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <div class="card-icon orange">
+                <i class="fas fa-award"></i>
+            </div>
+            <div class="card-value">
+                {% if graded_submissions > 0 %}
+                    {% widthratio total_grade_points graded_submissions 1 %}%
+                {% else %}
+                    --
+                {% endif %}
+            </div>
+        </div>
+        <h3 class="card-title">Training Score</h3>
+        <p class="card-description">Average performance across all assessments</p>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <div class="card-icon purple">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="card-value">{{ recent_assignments|length }}</div>
+        </div>
+        <h3 class="card-title">Upcoming Deadlines</h3>
+        <p class="card-description">Training assessments due this week</p>
+    </div>
+</div>
+
+<!-- Training Programs Section -->
+{% if enrollments %}
+<div class="dashboard-card" style="margin-bottom: 2rem;">
+    <h2 class="card-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-building"></i>
+        Your Training Programs
+    </h2>
+    
+    <div class="course-grid">
+        {% for enrollment in enrollments %}
+        <div class="course-card">
+            <div class="course-header">
+                <div class="course-code">{{ enrollment.course.course_code }}</div>
+                <h3 class="course-title">{{ enrollment.course.course_name }}</h3>
+                <p class="course-instructor">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    {{ enrollment.course.instructor.userprofile.first_name|default:enrollment.course.instructor.first_name }} 
+                    {{ enrollment.course.instructor.userprofile.last_name|default:enrollment.course.instructor.last_name }}
+                </p>
+            </div>
+
+            <div class="course-description" style="margin: 1rem 0; color: var(--neutral-gray); font-size: 0.9rem; line-height: 1.4;">
+                {{ enrollment.course.description|truncatewords:20 }}
+            </div>
+
+            <div class="course-stats">
+                <span><strong>Training Period:</strong> {{ enrollment.course.term }}</span>
+                <span><strong>Credits:</strong> {{ enrollment.course.credits }} CEU</span>
+            </div>
+
+            {% if enrollment.current_grade %}
+            <div class="course-stats">
+                <span><strong>Current Score:</strong> {{ enrollment.current_grade }}%</span>
+                <span><strong>Status:</strong> 
+                    <span style="color: {% if enrollment.status == 'active' %}var(--accent-green){% else %}var(--neutral-gray){% endif %};">
+                        {% if enrollment.status == 'active' %}In Progress{% elif enrollment.status == 'completed' %}Completed{% else %}{{ enrollment.get_status_display }}{% endif %}
+                    </span>
+                </span>
+            </div>
+            {% else %}
+            <div class="course-stats">
+                <span><strong>Progress:</strong> Not Started</span>
+                <span><strong>Status:</strong> 
+                    <span style="color: var(--accent-orange);">
+                        {% if enrollment.status == 'active' %}Ready to Begin{% else %}{{ enrollment.get_status_display }}{% endif %}
+                    </span>
+                </span>
+            </div>
+            {% endif %}
+
+            <div class="course-actions">
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-play"></i>
+                    Continue Training
+                </a>
+                <a href="#" class="btn btn-outline">
+                    <i class="fas fa-tasks"></i>
+                    View Assessments
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Assessments Section -->
+{% if recent_assignments %}
+<div class="dashboard-card" style="margin-bottom: 2rem;">
+    <h2 class="card-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-clipboard-list"></i>
+        Recent Training Assessments
+    </h2>
+    
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: var(--neutral-light);">
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--neutral-dark);">Assessment</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--neutral-dark);">Training Program</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--neutral-dark);">Due Date</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--neutral-dark);">Status</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--neutral-dark);">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in recent_assignments %}
+                <tr style="border-bottom: 1px solid rgba(37, 99, 235, 0.1);">
+                    <td style="padding: 1rem;">
+                        <div style="font-weight: 600; color: var(--neutral-dark);">{{ assignment.assignment_name }}</div>
+                        <div style="font-size: 0.8rem; color: var(--neutral-gray);">
+                            {{ assignment.get_assignment_type_display }} • {{ assignment.max_points }} points
+                            {% if assignment.assignment_type == 'quiz' %}
+                                <span style="color: var(--accent-orange);"> • Required</span>
+                            {% elif assignment.assignment_type == 'exam' %}
+                                <span style="color: var(--primary-blue);"> • Certification</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div style="font-weight: 500; color: var(--primary-blue);">{{ assignment.module.course.course_code }}</div>
+                        <div style="font-size: 0.8rem; color: var(--neutral-gray);">{{ assignment.module.module_name }}</div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div style="color: var(--neutral-dark);">{{ assignment.due_date|date:"M j, Y" }}</div>
+                        <div style="font-size: 0.8rem; color: {% if assignment.due_date <= today %}#ef4444{% else %}var(--neutral-gray){% endif %};">
+                            {% if assignment.due_date <= today %}
+                                Overdue
+                            {% else %}
+                                {{ assignment.due_date|timeuntil }} remaining
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td style="padding: 1rem;">
+                        {% with submission=assignment.submissions.first %}
+                            {% if submission %}
+                                <span style="color: {% if submission.status == 'graded' %}var(--accent-green){% elif submission.status == 'submitted' %}var(--accent-orange){% else %}var(--neutral-gray){% endif %};">
+                                    {% if submission.status == 'graded' %}
+                                        <i class="fas fa-check-circle"></i> Completed
+                                    {% elif submission.status == 'submitted' %}
+                                        <i class="fas fa-clock"></i> Under Review
+                                    {% else %}
+                                        <i class="fas fa-question-circle"></i> {{ submission.get_status_display }}
+                                    {% endif %}
+                                </span>
+                            {% else %}
+                                <span style="color: #ef4444;">
+                                    <i class="fas fa-exclamation-circle"></i> Not Started
+                                </span>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td style="padding: 1rem;">
+                        {% with submission=assignment.submissions.first %}
+                            {% if submission and submission.status == 'graded' %}
+                                <a href="#" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                                    <i class="fas fa-eye"></i>
+                                    View Results
+                                </a>
+                            {% elif submission %}
+                                <span style="font-size: 0.8rem; color: var(--neutral-gray);">
+                                    <i class="fas fa-clock"></i> Submitted
+                                </span>
+                            {% else %}
+                                <a href="#" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                                    <i class="fas fa-play"></i>
+                                    Start
+                                </a>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Submissions Section -->
+{% if recent_submissions %}
+<div class="dashboard-card">
+    <h2 class="card-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-file-alt"></i>
+        Recent Training Completions
+    </h2>
+    
+    {% for submission in recent_submissions %}
+    <div style="padding: 1rem; border: 1px solid rgba(37, 99, 235, 0.1); border-radius: 8px; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+            <div>
+                <h4 style="margin: 0; color: var(--neutral-dark);">{{ submission.assignment.assignment_name }}</h4>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--neutral-gray);">
+                    {{ submission.assignment.module.course.course_code }} • 
+                    Completed {{ submission.submission_date|date:"M j, Y \a\t g:i A" }}
+                </p>
+            </div>
+            <div style="text-align: right;">
+                {% if submission.grade %}
+                    <div style="font-size: 1.25rem; font-weight: 700; color: {% if submission.grade >= 80 %}var(--accent-green){% elif submission.grade >= 70 %}var(--accent-orange){% else %}#ef4444{% endif %};">
+                        {{ submission.grade }}/{{ submission.assignment.max_points }}
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--neutral-gray);">
+                        {{ submission.grade|floatformat:0 }}% - 
+                        {% if submission.grade >= 80 %}
+                            <span style="color: var(--accent-green);">Excellent</span>
+                        {% elif submission.grade >= 70 %}
+                            <span style="color: var(--accent-orange);">Good</span>
+                        {% else %}
+                            <span style="color: #ef4444;">Needs Improvement</span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div style="color: var(--accent-orange); font-weight: 600;">
+                        <i class="fas fa-clock"></i> Under Review
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if submission.feedback %}
+        <div style="background: rgba(37, 99, 235, 0.05); padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem;">
+            <strong style="color: var(--primary-blue);">Trainer Feedback:</strong>
+            <p style="margin: 0.25rem 0 0 0; color: var(--neutral-dark);">{{ submission.feedback|truncatewords:25 }}</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Empty State for New Employees -->
+{% if not enrollments %}
+<div class="dashboard-card" style="text-align: center; padding: 3rem;">
+    <i class="fas fa-user-tie" style="font-size: 3rem; color: var(--neutral-gray); margin-bottom: 1rem;"></i>
+    <h3 style="color: var(--neutral-dark); margin-bottom: 0.5rem;">Welcome to Employee Training!</h3>
+    <p style="color: var(--neutral-gray); margin-bottom: 2rem;">You haven't been enrolled in any training programs yet. Your HR administrator will assign required training based on your role and department.</p>
+    <div style="background: rgba(37, 99, 235, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: left;">
+        <strong style="color: var(--primary-blue);">Getting Started:</strong>
+        <ul style="margin: 0.5rem 0 0 1rem; color: var(--neutral-gray);">
+            <li>Check with your manager about required training</li>
+            <li>Contact HR if you need access to specific programs</li>
+            <li>Complete your employee onboarding if not already done</li>
+        </ul>
+    </div>
+    <a href="{% url 'index' %}" class="btn btn-primary">
+        <i class="fas fa-home"></i>
+        Back to Main Site
+    </a>
+</div>
+{% endif %}
+{% endblock %}

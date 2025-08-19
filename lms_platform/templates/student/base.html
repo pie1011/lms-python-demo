@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Employee Training Portal{% endblock %} | LMS Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/modern-lms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/student-styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="student-container">
+    <header class="student-header">
+        <nav class="student-nav">
+            <a href="{% url 'student_dashboard' %}" class="student-logo">
+                <i class="fas fa-user-tie"></i>
+                Employee Training Portal
+            </a>
+
+            <div class="student-user-info">
+                {% if user.is_authenticated %}
+                <div>
+                    <div class="user-welcome">Welcome back,</div>
+                    <div class="user-name">{{ user.userprofile.first_name|default:user.first_name|default:user.username }}</div>
+                </div>
+                <div class="student-actions">
+                    <a href="{% url 'index' %}" class="student-btn student-btn-outline">
+                        <i class="fas fa-home"></i>
+                        Main Site
+                    </a>
+                    <form method="post" action="{% url 'student_logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="student-btn student-btn-danger">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main class="student-main">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-triangle"></i>
+                {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-circle"></i>
+                {% elif message.tags == 'info' %}
+                <i class="fas fa-info-circle"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

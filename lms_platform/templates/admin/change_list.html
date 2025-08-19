@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+{% load admin_urls static admin_list %}
+
+{% block content %}
+<div class="list-header">
+    <h1 class="list-title">{{ title }}</h1>
+    
+    <div class="list-actions">
+        {% if has_add_permission %}
+            <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button">
+                <i class="fas fa-plus"></i>
+                Add {{ opts.verbose_name }}
+            </a>
+        {% endif %}
+        
+        {% if cl.search_fields %}
+            <form method="get" class="search-form">
+                <input type="text" name="q" value="{{ cl.query }}" placeholder="Search..." class="search-input">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+                {% for key, value in cl.params.items %}
+                    {% if key != 'q' %}
+                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                    {% endif %}
+                {% endfor %}
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if cl.formset.errors %}
+    <div class="message error">
+        <i class="fas fa-exclamation-triangle"></i>
+        Please correct the errors below.
+    </div>
+{% endif %}
+
+{% block search %}{% endblock %}
+
+{% block date_hierarchy %}{% endblock %}
+
+{% block filters %}
+    {% if cl.filter_specs %}
+        <div class="filters">
+            <div class="filter-title">Filter by:</div>
+            <div class="filter-links">
+                {% for spec in cl.filter_specs %}
+                    {% for choice in spec.choices %}
+                        <a href="{{ choice.query_string|iriencode }}" 
+                           class="{% if choice.selected %}selected{% endif %}">
+                            {{ choice.display }}
+                        </a>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% if action_form and actions_on_top and cl.show_admin_actions %}
+    {% admin_actions %}
+{% endif %}
+
+{% block result_list %}
+    {% if cl.result_count == 0 %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No {{ cl.opts.verbose_name_plural }} found</h3>
+            <p>{% if cl.query %}No results for "{{ cl.query }}"{% else %}No {{ cl.opts.verbose_name_plural }} have been created yet.{% endif %}</p>
+            {% if has_add_permission %}
+                <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button" style="margin-top: 1rem; display: inline-flex;">
+                    <i class="fas fa-plus"></i>
+                    Add the first {{ cl.opts.verbose_name }}
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        {% result_list cl %}
+    {% endif %}
+{% endblock %}
+
+{% if action_form and actions_on_bottom and cl.show_admin_actions %}
+    {% admin_actions %}
+{% endif %}
+
+<script>
+    // Action checkbox functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleCheckbox = document.getElementById('action-toggle');
+        const actionCheckboxes = document.querySelectorAll('.action-select');
+        const actionCounter = document.querySelector('.action-counter');
+        
+        if (toggleCheckbox) {
+            toggleCheckbox.addEventListener('change', function() {
+                actionCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateCounter();
+            });
+        }
+        
+        actionCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateCounter);
+        });
+        
+        function updateCounter() {
+            const checkedCount = document.querySelectorAll('.action-select:checked').length;
+            if (actionCounter) {
+                const totalCount = actionCounter.dataset.actionsIcnt;
+                actionCounter.textContent = `${checkedCount} of ${totalCount} selected`;
+            }
+        }
+    });
+</script>
+{% endblock %}
